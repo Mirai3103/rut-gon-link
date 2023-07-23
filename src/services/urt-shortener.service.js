@@ -3,16 +3,27 @@ import UrlShortenerModel from "@/models/url_shortener.model";
 import CrawlService from "./crawl.service";
 
 export default class UrlShortenerService {
-    static async getByCode(code) {
+    static async getByCode(code, isVisitsIncrement = false) {
         const urlShortener = await UrlShortenerModel.findOne({ code: code }).lean();
+        if (urlShortener && isVisitsIncrement) {
+            urlShortener.visits++;
+            urlShortener.save();
+        }
         return urlShortener;
     }
     static async create({ originalUrl, code, password, userId }) {
         const urlShortener = await UrlShortenerModel.create({ originalUrl, code, password, createdBy: userId });
-        CrawlService.crawlUrlInfo({ url: originalUrl }).then((headerHtml) => {
-            urlShortener.headerHtml = headerHtml.html;
-            urlShortener.title = headerHtml.title;
-            urlShortener.save(); //
+        await new Promise((resolve, reject) => {
+            CrawlService.crawlUrlInfo({ url: originalUrl })
+                .then(async (headerHtml) => {
+                    urlShortener.headerHtml = headerHtml.html;
+                    urlShortener.title = headerHtml.title;
+                    await urlShortener.save(); //
+                    resolve();
+                })
+                .catch((err) => {
+                    reject(err);
+                });
         });
 
         return urlShortener;

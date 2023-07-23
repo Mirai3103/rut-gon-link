@@ -11,16 +11,13 @@ class Database {
         if (this.isConnected()) {
             return;
         }
-        const { host, name, password, port, user } = appConfig.db;
-        const connectionString = `${type}://${host}:${port}/${name}`;
+        const connectionString = process.env.DB_URI;
         // mongoose.set("debug", false);
         // mongoose.set("debug", { color: true });
 
         mongoose
             .connect(connectionString, {
-                pass: password.length > 0 ? password : undefined,
                 maxPoolSize: 50,
-                user: user.length > 0 ? user : undefined,
             })
             .then(() => console.log("Database connected"))
             .catch((err) => console.log("Error connecting to database", err));

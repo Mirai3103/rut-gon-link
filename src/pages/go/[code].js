@@ -24,12 +24,17 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { getDiffStr } from "@/utils";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
 export default function CodePage({ data }) {
     const [password, setPassword] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
     const toast = useToast();
+    const { redirect } = useRouter();
     const handleClick = () => {
+        if (!data.isHasPassword) {
+            redirect(data.originalUrl);
+            return;
+        }
         if (!password) {
             toast({
                 colorScheme: "red",
@@ -88,7 +93,7 @@ export default function CodePage({ data }) {
                         <Button colorScheme="blue" size="lg" variant={"outline"}>
                             Tạo mã QR
                         </Button>
-                        <Button colorScheme="blue" size="lg" variant={"outline"}>
+                        <Button colorScheme="blue" size="lg" variant={"outline"} onClick={() => redirect("/")}>
                             Tạo liên kết mới
                         </Button>
                     </Stack>
