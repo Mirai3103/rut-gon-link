@@ -15,8 +15,8 @@ export default async function handler(req, res) {
 
 async function POST(req, res) {
     const password = req.body.password;
-    const { id } = req.query;
-    const url = await UrlShortenerService.getByCode(id, true);
+    const { code } = req.query;
+    const url = await UrlShortenerService.getByCode(code, true);
     if (url && url.password === password) {
         return res.status(200).json(url);
     } else {
@@ -26,8 +26,8 @@ async function POST(req, res) {
 
 async function GET(req, res) {
     // get id from dynamic route
-    const { id } = req.query;
-    const url = await UrlShortenerService.getByCode(id, true);
+    const { code } = req.query;
+    const url = await UrlShortenerService.getByCode(code, true);
     if (url) {
         res.status(200).json({
             ...url,

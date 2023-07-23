@@ -28,6 +28,7 @@ import { FiHome, FiTrendingUp, FiCompass, FiStar, FiSettings, FiMenu, FiBell, Fi
 import { IconType } from "react-icons";
 import { ReactText } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
+import LinkNext from "next/link";
 const LinkItems = [
     { name: "Home", icon: FiHome },
     { name: "Trending", icon: FiTrendingUp },
@@ -105,10 +106,11 @@ const MobileNav = ({ ...rest }) => {
                 borderColor={useColorModeValue("gray.200", "gray.700")}
             >
                 <MenuItem>Profile</MenuItem>
-                <MenuItem>Settings</MenuItem>
-                <MenuItem>Billing</MenuItem>
+                <MenuItem as={LinkNext} href="/manage">
+                    Quản lý liên kết
+                </MenuItem>
                 <MenuDivider />
-                <MenuItem onClick={signOut}>Sign out</MenuItem>
+                <MenuItem onClick={signOut}>Đăng xuất</MenuItem>
             </MenuList>
         </Menu>
     );
