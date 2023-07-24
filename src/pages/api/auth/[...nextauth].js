@@ -50,5 +50,8 @@ export const authOptions = {
         },
     },
     secret: process.env.JWT_SECRET || "cc",
+    pages: {
+        signIn: "/login",
+    },
 };
 export default NextAuth(authOptions);
