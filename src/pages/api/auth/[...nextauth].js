@@ -16,9 +16,15 @@ export const authOptions = {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                const user = { id: 1, name: "Admin" };
+                const user = await UserService.login(credentials);
+
                 if (user) {
-                    return user;
+                    return {
+                        email: user.email,
+                        name: user.name,
+                        id: user._id,
+                        image: user.avatar,
+                    };
                 } else {
                     return null;
                 }

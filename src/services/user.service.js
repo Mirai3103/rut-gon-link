@@ -11,4 +11,12 @@ export default class UserService {
         const user = await UserModel.findOne({ email });
         return user;
     }
+    static async register({ email, password, name }) {
+        const user = await UserModel.create({ email, password, name });
+        return user;
+    }
+    static async login({ email, password }) {
+        const user = await UserModel.findOne({ email, password }).lean();
+        return user;
+    }
 }

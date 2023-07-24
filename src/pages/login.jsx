@@ -25,6 +25,11 @@ import {
 } from "react-social-login-buttons";
 import { useRouter } from "next/router";
 import OAuthButton from "@/components/OAuthButton";
+import OAuthSection from "@/components/OAuthSection";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { useForm } from "react-hook-form";
+import { set } from "mongoose";
 export default function Login({ providers, callbackUrl, csrfToken }) {
     const toast = useToast();
     React.useEffect(() => {
@@ -38,7 +43,6 @@ export default function Login({ providers, callbackUrl, csrfToken }) {
         });
     }, [toast]);
 
-    const [isLoading, setIsLoading] = React.useState(false);
     return (
         <main className="min-h-screen">
             <Center py={6}>
@@ -54,38 +58,23 @@ export default function Login({ providers, callbackUrl, csrfToken }) {
                         Đăng nhập
                     </Heading>
                     <Stack mt={8}>
-                        <Grid
-                            templateColumns={{
-                                base: "repeat(1, 1fr)",
-                                md: "repeat(2, 1fr)",
-                            }}
-                            gap={2}
-                        >
-                            <FacebookLoginButton text="Đăng nhập với Facebook" onClick={() => alert("Hello")} />
-                            <OAuthButton
-                                ButtonComponent={GoogleLoginButton}
-                                providerName={"Google"}
-                                callbackUrl={callbackUrl}
-                                signInUrl={providers.google.signinUrl}
-                                csrfToken={csrfToken}
-                            />
-
-                            <GithubLoginButton text="Đăng nhập bằng Github" onClick={() => alert("Hello")} />
-                            <MicrosoftLoginButton text="Đăng nhập với Microsoft" onClick={() => alert("Hello")} />
-                        </Grid>
+                        <OAuthSection providers={providers} csrfToken={csrfToken} callbackUrl={callbackUrl} />
                         <StackDivider mt={4} textAlign={"center"} color={useColorModeValue("gray.600", "gray.400")}>
                             hoặc
                         </StackDivider>
-                        <Stack as={"form"} spacing={"5"}>
+                        <Stack as={"form"} spacing={"5"} action={providers.credentials.callbackUrl} method={"POST"}>
+                            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+                            <input name="callbackUrl" type="hidden" defaultValue={callbackUrl} />
                             <FormControl isRequired>
                                 <FormLabel>Email</FormLabel>
-                                <Input type="email" />
+                                <Input type="email" name="email" />
                             </FormControl>
                             <FormControl isRequired>
                                 <FormLabel>Mật khẩu</FormLabel>
-                                <Input type="password" />
+                                <Input type="password" name="password" />
                             </FormControl>
-                            <Button colorScheme="teal" size="lg" fontSize={"md"} isLoading={isLoading}>
+
+                            <Button colorScheme="teal" size="lg" fontSize={"md"} type="submit">
                                 Đăng nhập
                             </Button>
                             <Text textAlign={"center"} fontSize={"sm"}>
@@ -103,8 +92,18 @@ export default function Login({ providers, callbackUrl, csrfToken }) {
 }
 
 export async function getServerSideProps(context) {
-    const providers = await getProviders();
     const query = context.query;
+
+    const session = await getServerSession(context.req, context.res, authOptions);
+    if (session) {
+        return {
+            redirect: {
+                destination: query.callbackUrl || "/",
+                permanent: false,
+            },
+        };
+    }
+    const providers = await getProviders();
     const csrfToken = await getCsrfToken(context);
 
     return {

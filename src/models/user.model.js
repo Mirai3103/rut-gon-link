@@ -44,6 +44,8 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: false,
             trim: true,
+            default:
+                "https://cdn.discordapp.com/attachments/745580405088059442/1132218031796408320/2696ba1f83b1728c8c1c58216070bfb8.png",
         },
         provider: {
             type: String,
