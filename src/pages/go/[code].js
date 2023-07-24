@@ -139,10 +139,7 @@ export default function CodePage({ data }) {
 
 export async function getServerSideProps(context) {
     try {
-        const protocol = context.req.headers["x-forwarded-proto"] || "http";
-        const host = context.req.headers["x-forwarded-host"] || context.req.headers["host"];
-        const url = `${protocol}://${host}`;
-        const urlShortener = await axios.get(url + `/api/url-shortener/${context.params.code}`);
+        const urlShortener = await axios.get(process.env.APP_DOMAIN + `/api/url-shortener/${context.params.code}`);
 
         return {
             props: {

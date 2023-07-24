@@ -37,3 +37,13 @@ export const getDiffStr = (oldDate) => {
     const diffInYears = Math.floor(diffInMonths / 12);
     return `${diffInYears} năm trước`;
 };
+
+export function getDiffField(oldObj, newObj) {
+    const diff = {};
+    for (const key in newObj) {
+        if (oldObj[key] !== newObj[key]) {
+            diff[key] = newObj[key];
+        }
+    }
+    return diff;
+}

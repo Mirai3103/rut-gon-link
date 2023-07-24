@@ -22,7 +22,8 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import React from "react";
 import { useRouter } from "next/navigation";
-export default function Home() {
+import Head from "next/head";
+export default function Home({ appDomain }) {
     const { data } = useSession();
     const { push } = useRouter();
     const {
@@ -62,6 +63,17 @@ export default function Home() {
     };
     return (
         <main className="min-h-[80vh] w-full">
+            <Head>
+                <title>Rút gọn liên kết</title>
+                <meta name="description" content="Rút gọn liên kết" />
+                <meta name="keywords" content="Rút gọn liên kết" />
+                <meta name="author" content="Laffy" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <meta property="og:title" content="Rút gọn liên kết" />
+                <meta property="og:description" content="Rút gọn liên kết" />
+                <meta property="og:image" content="/favicon.ico" />
+                <meta property="og:site_name" content="Rút gọn liên kết" />
+            </Head>
             <Center py={6}>
                 <Box
                     maxW={"520px"}
@@ -115,7 +127,7 @@ export default function Home() {
                         >
                             <FormLabel>Id liên kết</FormLabel>
                             <InputGroup>
-                                <InputLeftAddon>{"https://localhost/"}</InputLeftAddon>
+                                <InputLeftAddon>{appDomain + "/"}</InputLeftAddon>
                                 <Input type="text" name="code" {...register("code")} />
                             </InputGroup>
                         </FormControl>
@@ -141,4 +153,12 @@ export default function Home() {
             </Center>
         </main>
     );
+}
+
+export async function getStaticProps() {
+    return {
+        props: {
+            appDomain: process.env.APP_DOMAIN,
+        },
+    };
 }

@@ -4,6 +4,10 @@ import { authOptions } from "../auth/[...nextauth]";
 import UserService from "@/services/user.service";
 export default async function handler(req, res) {
     switch (req.method) {
+        case "DELETE":
+            return await DELETE(req, res);
+        case "PATCH":
+            return await PATCH(req, res);
         case "POST":
             return await POST(req, res);
         case "GET":
@@ -11,6 +15,27 @@ export default async function handler(req, res) {
         default:
             return res.status(405).end(); //Method Not Allowed
     }
+}
+async function DELETE(req, res) {
+    const { code } = req.query;
+    const session = await getServerSession(req, res, authOptions);
+    if (!session) {
+        return res.status(401).end();
+    }
+    const { email } = session.user;
+    const isDeleted = await UrlShortenerService.delete({ code, ownerEmail: email });
+    return res.status(200).json({ isDeleted });
+}
+
+async function PATCH(req, res) {
+    const { oldCode, newCode, password } = req.body;
+    const session = await getServerSession(req, res, authOptions);
+    if (!session) {
+        return res.status(401).end();
+    }
+    const { email } = session.user;
+    const url = await UrlShortenerService.update({ oldCode, newCode, password, ownerEmail: email });
+    return res.status(200).json(url);
 }
 
 async function POST(req, res) {

@@ -29,6 +29,7 @@ import { IconType } from "react-icons";
 import { ReactText } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import LinkNext from "next/link";
+import { useRouter } from "next/router";
 const LinkItems = [
     { name: "Home", icon: FiHome },
     { name: "Trending", icon: FiTrendingUp },
@@ -82,6 +83,7 @@ const NavItem = ({ icon, children, ...rest }) => {
 
 const MobileNav = ({ ...rest }) => {
     const { data } = useSession();
+    const { push } = useRouter();
     const MenuAuth = (
         <Menu>
             <MenuButton cursor={"pointer"} py={2} transition="all 0.3s" _focus={{ boxShadow: "none" }}>
@@ -106,9 +108,7 @@ const MobileNav = ({ ...rest }) => {
                 borderColor={useColorModeValue("gray.200", "gray.700")}
             >
                 <MenuItem>Profile</MenuItem>
-                <MenuItem as={LinkNext} href="/manage">
-                    Quản lý liên kết
-                </MenuItem>
+                <MenuItem onClick={() => push("/manage")}>Quản lý liên kết</MenuItem>
                 <MenuDivider />
                 <MenuItem onClick={signOut}>Đăng xuất</MenuItem>
             </MenuList>
