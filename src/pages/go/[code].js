@@ -29,10 +29,10 @@ export default function CodePage({ data }) {
     const [password, setPassword] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
     const toast = useToast();
-    const { redirect } = useRouter();
+    const { push } = useRouter();
     const handleClick = () => {
         if (!data.isHasPassword) {
-            redirect(data.originalUrl);
+            push(data.originalUrl);
             return;
         }
         if (!password) {
